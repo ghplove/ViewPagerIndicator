@@ -1,38 +1,56 @@
 package com.lr.ghp.viewpagerindicator;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
-public class MainActivity extends Activity {
-
+public class MainActivity extends FragmentActivity {
+    private LoanFlowVPIndicator information_indicator;
+    private ViewPager information_vp;
+    private ArrayList<Fragment> fragmentList = new ArrayList<Fragment>();
+    private List<String> mDatas = Arrays.asList("选择额度", "基本消息", "征信核实", "审批结果");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initView();
+        initFragment();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    private void initView(){
+        information_indicator= (LoanFlowVPIndicator) findViewById(R.id.information_indicator);
+        information_vp= (ViewPager) findViewById(R.id.information_vp);
     }
+    private void initFragment(){
+        fragmentList.add(new FirstFragment());
+        fragmentList.add(new FirstFragment());
+        fragmentList.add(new FirstFragment());
+        fragmentList.add(new FirstFragment());
+        FragmentPagerAdapter fragmentPagerAdapter=new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int i) {
+                return fragmentList.get(i);
+            }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+            @Override
+            public int getCount() {
+                return fragmentList.size();
+            }
+        };
+        information_vp.setAdapter(fragmentPagerAdapter);
+        information_indicator.setTabNum(4);//省略默认为4
+        information_indicator.initView();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        //设置关联的ViewPager
+        information_indicator.setViewPager(information_vp, 1);
+        information_indicator.setTabItemTitles(mDatas);
+        information_indicator.highLightTextView(1);
     }
 }
